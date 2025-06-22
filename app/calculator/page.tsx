@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowLeft, Calculator, Download, Info, TrendingUp, DollarSign, Users, Building } from "lucide-react"
+import { ArrowLeft, Calculator, Download, Info, TrendingUp, DollarSign, Users, Building, FileText } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -19,6 +19,8 @@ import RoiTimelineChart from "@/components/roi-timeline-chart"
 import CostBreakdownChart from "@/components/cost-breakdown-chart"
 import ImplementationTimelineChart from "@/components/implementation-timeline-chart"
 import CyberInsuranceChart from "@/components/cyber-insurance-chart"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import ExecutiveSummary from "@/components/executive-summary"
 
 // Enhanced vendor data with detailed cost structures
 const vendorCostData = {
@@ -343,6 +345,7 @@ export default function CalculatorPage() {
   const [includeMaintenance, setIncludeMaintenance] = useState(true)
   const [includeInsurance, setIncludeInsurance] = useState(true)
   const [customDeviceCount, setCustomDeviceCount] = useState("")
+  const [summaryOpen, setSummaryOpen] = useState(false)
 
   const selectedVendor = vendorCostData[vendor]
   const selectedIndustry = industryData[industry]
@@ -429,6 +432,19 @@ export default function CalculatorPage() {
   }
 
   const costs = calculateDetailedCosts()
+
+  const handleExportPdf = () => {
+    // This is a placeholder for PDF generation logic.
+    // In a real app, you'd use libraries like jsPDF and html2canvas
+    // to capture the content of the page and save it as a PDF.
+    alert("PDF export functionality would be implemented here.")
+    console.log("Exporting the following data to PDF:", {
+      vendor: selectedVendor,
+      industry,
+      endpoints,
+      costs,
+    })
+  }
 
   return (
     <div className="container py-10">
@@ -607,10 +623,27 @@ export default function CalculatorPage() {
               </div>
             </div>
 
-            <Button className="w-full mt-4">
-              <Download className="mr-2 h-4 w-4" />
-              Export Detailed Report
-            </Button>
+            <div className="space-y-2 mt-6">
+              <Dialog open={summaryOpen} onOpenChange={setSummaryOpen}>
+                <DialogTrigger asChild>
+                  <Button className="w-full">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Generate Executive Summary
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl">
+                  <DialogHeader>
+                    <DialogTitle>Executive Summary</DialogTitle>
+                  </DialogHeader>
+                  <ExecutiveSummary data={{ costs, vendor: selectedVendor, industry, endpoints, years }} />
+                </DialogContent>
+              </Dialog>
+
+              <Button variant="outline" className="w-full" onClick={handleExportPdf}>
+                <Download className="mr-2 h-4 w-4" />
+                Export Detailed Report (PDF)
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
