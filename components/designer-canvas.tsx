@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useDroppable } from "@dnd-kit/core"
 import { useDraggable } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
@@ -149,12 +149,22 @@ export function DesignerCanvas({
 
   // Attach global mouse up listener to cancel connection if mouse is released outside a component
   // This is a simplified approach. For more robust handling, you might need to check if the mouse is over a valid drop target.
-  useState(() => {
+  useEffect(() => {
+    const handleMouseUpGlobal = () => {
+      // if connecting and mouse is not over a component, cancel connection
+      if (connecting) {
+        // It's important that setConnecting is stable or included in dependencies if it changes
+        // For this specific case, setConnecting from useState is stable.
+        setConnecting(null)
+      }
+    }
+
     document.addEventListener("mouseup", handleMouseUpGlobal)
     return () => {
       document.removeEventListener("mouseup", handleMouseUpGlobal)
     }
-  }, [connecting])
+  }, [connecting]) // Dependency array includes 'connecting' to re-evaluate if its state changes.
+  // setConnecting itself is stable and doesn't need to be in the deps.
 
   return (
     <div
