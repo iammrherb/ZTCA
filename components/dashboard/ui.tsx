@@ -234,25 +234,24 @@ export const ChartContainer = ({
 
 export class DebugChartWrapper extends React.Component<
   { chartName: string; data: any; children: React.ReactNode; [key: string]: any },
-  { hasError: boolean; error: Error | any | null } // Allow 'any' for error type initially
+  { hasError: boolean; error: Error | null }
 > {
   constructor(props: any) {
     super(props)
     this.state = { hasError: false, error: null }
   }
 
-  static getDerivedStateFromError(error: Error | any) {
+  static getDerivedStateFromError(error: Error) {
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: Error | any, errorInfo: React.ErrorInfo) {
-    const { chartName } = this.props
-    console.error(`[DebugChartWrapper: ${chartName}] CRASHED! Details below:`)
-    console.error("Error object:", error)
-    console.error("Error info:", errorInfo)
-    // Log all props to help identify issues with data or configuration
-    const { children, ...propsToLog } = this.props
-    console.error("Props at time of crash:", propsToLog)
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    const { chartName, ...propsToLog } = this.props
+    console.error(`[DebugChartWrapper: ${chartName}] CRASHED!`, {
+      error,
+      errorInfo,
+      props: propsToLog,
+    })
   }
 
   render() {
@@ -260,55 +259,22 @@ export class DebugChartWrapper extends React.Component<
     const { hasError, error } = this.state
 
     if (hasError) {
-      let errorMessageString = "An unknown error occurred."
-      if (error) {
-        if (error instanceof Error && typeof error.message === "string") {
-          errorMessageString = error.message
-        } else if (typeof error.toString === "function") {
-          const preliminaryMessage = error.toString()
-          // Avoid "[object Object]" if possible
-          if (preliminaryMessage !== "[object Object]" || !error.message) {
-            errorMessageString = preliminaryMessage
-          } else {
-            // If toString is "[object Object]" and error.message exists (even if not string)
-            try {
-              errorMessageString = `Error: ${JSON.stringify(error.message || error)}`
-            } catch (e) {
-              errorMessageString = "Could not stringify error message or error object."
-            }
-          }
-        } else {
-          try {
-            errorMessageString = JSON.stringify(error)
-          } catch (e) {
-            errorMessageString = "Could not stringify error object."
-          }
-        }
-      }
-
-      let errorStackString = "No stack trace available."
-      if (error instanceof Error && error.stack) {
-        errorStackString = error.stack
-      }
-
       return (
         <div className="chart-placeholder text-red-500">
           <AlertTriangle className="w-8 h-8 mb-2" />
           <p className="font-bold">Error rendering {chartName}.</p>
-          <p className="text-xs text-gray-400 mt-1">Check browser console for detailed logs.</p>
-          <details className="mt-2 text-xs text-left bg-black/20 p-2 rounded-md max-w-full overflow-auto">
-            <summary className="cursor-pointer font-medium">Error Details</summary>
-            <pre className="mt-1 whitespace-pre-wrap">Message: {errorMessageString}</pre>
-            <pre className="mt-1 whitespace-pre-wrap">Stack: {errorStackString}</pre>
-          </details>
+          <p className="text-xs text-gray-400 mt-1">Check console for details.</p>
+          <pre className="mt-2 text-xs text-left bg-black/20 p-2 rounded-md max-w-full overflow-auto">
+            {error?.message}
+          </pre>
         </div>
       )
     }
 
-    // console.log(`[DebugChartWrapper: ${chartName}] Rendering with props:`, { data, ...props })
+    console.log(`[DebugChartWrapper: ${chartName}] Rendering with props:`, { data, ...props })
 
     if (data === undefined || data === null) {
-      // console.warn(`[DebugChartWrapper: ${chartName}] 'data' prop is undefined or null.`)
+      console.warn(`[DebugChartWrapper: ${chartName}] 'data' prop is undefined or null.`)
       return <div className="chart-placeholder">Data for {chartName} is not available.</div>
     }
 
