@@ -20,7 +20,8 @@ import CostBreakdownChart from "@/components/cost-breakdown-chart"
 import ImplementationTimelineChart from "@/components/implementation-timeline-chart"
 import CyberInsuranceChart from "@/components/cyber-insurance-chart"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import ExecutiveSummary from "@/components/executive-summary"
+import EnhancedExecutiveSummary from "@/components/enhanced-executive-summary"
+import { BrandingSettings } from "@/components/branding-settings"
 
 // Enhanced vendor data with detailed cost structures
 const vendorCostData = {
@@ -448,14 +449,17 @@ export default function CalculatorPage() {
 
   return (
     <div className="container py-10">
-      <div className="flex items-center mb-8">
-        <Link href="/">
-          <Button variant="ghost" size="icon" className="mr-2">
-            <ArrowLeft className="h-4 w-4" />
-            <span className="sr-only">Back</span>
-          </Button>
-        </Link>
-        <h1 className="text-3xl font-bold">Zero Trust NAC - Detailed Cost Analysis</h1>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center">
+          <Link href="/">
+            <Button variant="ghost" size="icon" className="mr-2">
+              <ArrowLeft className="h-4 w-4" />
+              <span className="sr-only">Back</span>
+            </Button>
+          </Link>
+          <h1 className="text-3xl font-bold">Zero Trust NAC - Detailed Cost Analysis</h1>
+        </div>
+        <BrandingSettings />
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
@@ -635,7 +639,7 @@ export default function CalculatorPage() {
                   <DialogHeader>
                     <DialogTitle>Executive Summary</DialogTitle>
                   </DialogHeader>
-                  <ExecutiveSummary data={{ costs, vendor: selectedVendor, industry, endpoints, years }} />
+                  <EnhancedExecutiveSummary data={{ costs, vendor: selectedVendor, industry, endpoints, years }} />
                 </DialogContent>
               </Dialog>
 

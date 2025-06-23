@@ -6,7 +6,7 @@ import { Home, Calculator, Rows, ShieldCheck, Building2, Shield, LayoutGrid } fr
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import AnimatedLogo from "@/app/animated-logo"
+import Image from "next/image"
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
@@ -23,8 +23,14 @@ export function AppSidebar() {
 
   return (
     <aside className="w-16 flex flex-col items-center space-y-4 py-4 bg-background border-r">
-      <Link href="/">
-        <AnimatedLogo className="h-8 w-8" />
+      <Link href="/" className="flex items-center justify-center">
+        <Image
+          src="/images/portnox-logo.png"
+          alt="Portnox"
+          width={32}
+          height={32}
+          className="rounded transition-transform hover:scale-110"
+        />
         <span className="sr-only">Portnox TCO Calculator</span>
       </Link>
       <TooltipProvider>
